@@ -62,7 +62,7 @@ def run_frame_processing(image_1, image_2):
         if len(m_n) != 2:
             continue
         (m,n) = m_n
-        if m.distance < 0.9*n.distance:
+        if m.distance < 0.7*n.distance:
             good.append(m)
 
     if len(good) > MIN_MATCH_COUNT:
@@ -76,7 +76,7 @@ def run_frame_processing(image_1, image_2):
         pts = np.float32([ [0,0],[0,h-1],[w-1,h-1],[w-1,0] ]).reshape(-1,1,2)
         dst = cv2.perspectiveTransform(pts,M)
 
-        scene = cv2.polylines(scene, [np.int32(dst)], True, 255, 3, cv2.LINE_AA)
+        scene = cv2.polylines(scene, [np.int32(dst)], True, 155, 3, cv2.LINE_AA)
 
     else:
         print('Not enough good matches. {} found'.format(len(good)))
@@ -93,4 +93,4 @@ def run_frame_processing(image_1, image_2):
     plt.imshow(img_3, 'gray'), plt.show()
 
 if __name__ == '__main__':
-    run_frame_processing('code.jpg', 'hidden_code.jpg')
+    run_frame_processing('box.jpg', 'code.jpg')
