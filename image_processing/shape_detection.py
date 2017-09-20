@@ -9,10 +9,10 @@ MIN_MATCH_COUNT = 10
 target =  cv2.imread('closeup.jpg',0)
 scene = cv2.imread('farout.jpg',0)
 
-sift = cv2.xfeatures2d.SIFT_create()
+orb = cv2.ORB_create()
 
-kp1, des1 = sift.detectAndCompute(target,None)
-kp2, des2 = sift.detectAndCompute(scene,None)
+kp1, des1 = orb.detectAndCompute(target,None)
+kp2, des2 = orb.detectAndCompute(scene,None)
 
 
 FLANN_INDEX_KDTREE = 0
