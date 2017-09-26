@@ -211,4 +211,26 @@ long microsecondsToCentimeters(long microseconds) {
   return microseconds / 29 / 2;
 }
 
+/* 
+
+int KangaYN; // variable to determine if the object is present.
+int KangaRL; // variable to determine if the object is in the left or right half of the frame, and how much.
+int KangaUD; // variable to determine if the object is in the upper or lower half of the frame, and how much.
+
+if KangaYN = 1; // yes, the object is present
+   if KangaRL = 1; // the object is on the right side of the picture
+      if KangaUD = 1; // the object is on the upper half of the picture
+          spinClockwise();
+      else if KangaUD = 0;
+   else if KangaRL = 0;
+      if KangaUD = 1;
+      else if KangaUD = 0;
+      
+else if KangaYN = 0;   
+
+
+
+
+*/
+
 
