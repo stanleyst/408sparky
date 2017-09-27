@@ -8,8 +8,10 @@ FLANN_INDEX_KDTREE = 0
 
 def run_frame_processing(image_1, image_2):
     # Open the target image and the scene image
-    target = cv2.imread(image_1, 0)
+    img = cv2.imread(image_1, 0)
     scene = cv2.imread(image_2, 0)
+
+    target = cv2.Canny(img,0,500)
 
     orb = cv2.ORB_create()
 
@@ -130,4 +132,4 @@ def run_frame_processing(image_1, image_2):
     return r, l, s
 
 if __name__ == '__main__':
-    run_frame_processing('box.jpg', 'code.jpg')
+    run_frame_processing('star.jpg', 'better_zak.jpg')
