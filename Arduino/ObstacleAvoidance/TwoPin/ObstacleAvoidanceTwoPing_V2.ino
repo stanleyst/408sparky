@@ -213,21 +213,18 @@ long microsecondsToCentimeters(long microseconds) {
 
 /* 
 
-from file1 import x1
+int KangaDirection;
 
-KangaDirection = x1
-
-if KangaDirection = 0; // go straight
+if KangaDirection = 'S'; // go straight
     loop();
-elif KangaDirection = 1; // go right
+else if KangaDirection = 'R'; // go right
     spinClockwise();
     delay(500);
     loop;
-elif KangaDirection = 2; // go left   
+else if KangaDirection = 'L'; // go left   
     spinCounterClockwise();
     delay(500);
     loop;
-
 
 */
 
