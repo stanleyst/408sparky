@@ -25,6 +25,9 @@ while not connected:
 ## ser.write("L\n".encode())
 
 ser.write('L')
+ser.write('R')
+ser.write('L')
+ser.write('S')
 
 ## Wait until the arduino tells us it 
 ## is finished blinking

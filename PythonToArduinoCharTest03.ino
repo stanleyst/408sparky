@@ -19,16 +19,17 @@
 */
 
 String inputString = "";         // a String to hold incoming data
-boolean stringComplete = false;  // whether the string is complete
-boolean bCompletedString = false;
-String testString = "";
-char inChar = '5';
+// boolean stringComplete = false;  // whether the string is complete
+// boolean bCompletedString = false;
+// String testString = "";
+char inChar = '5'; // just set it to a random value we won't use
+int endProgram = 0;
 
 void setup() {
   // initialize serial:
   Serial.begin(9600);
   // reserve 200 bytes for the inputString:
-  inputString.reserve(200);
+  // inputString.reserve(200);
   Serial.write('1'); // tell Python we are ready
 }
 
@@ -36,8 +37,8 @@ void loop() {
   // print the string when a newline arrives:
   if (inChar == 'L') 
   {
-    Serial.write('0'); // tell python to close serial
-    Serial.read();     // Serial.flush();
+    // Serial.write('0'); // tell python to close serial
+    // Serial.read();     // Serial.flush();
     delay(100);
     // Serial.flush();
 
@@ -45,12 +46,51 @@ void loop() {
 
     delay(100);
 
-    Serial.print("\nReceived L\n");
-    delay(100);
-    Serial.print((char)inChar);
-    
+    inputString += inChar;
     inChar = '5';
+    endProgram++;
   }
+
+  else if (inChar == 'S') 
+  {
+    // Serial.write('0'); // tell python to close serial
+    // Serial.read();     // Serial.flush();
+    delay(100);
+    // Serial.flush();
+
+    Serial.print((char)inChar);
+
+    delay(100);
+
+    inputString += inChar;
+    inChar = '5';
+    endProgram++;
+
+  }
+
+  else if (inChar == 'R') 
+  {
+    // Serial.write('0'); // tell python to close serial
+    // Serial.read();     // Serial.flush();
+    delay(100);
+    // Serial.flush();
+
+    Serial.print((char)inChar);
+
+    delay(100);
+
+    inputString += inChar;
+    inChar = '5';
+    endProgram++;
+  }
+
+  if(endProgram >= 3)
+  {
+    Serial.write('0');
+    endProgram = 0;
+    delay(100);
+    Serial.print(inputString);
+  }    
 }
 
 /*
@@ -59,7 +99,7 @@ void loop() {
   delay response. Multiple bytes of data may be available.
 */
 void serialEvent() {
-  while (Serial.available())
+  // while (Serial.available())
   if (Serial.available()) 
   {
     // get the new byte:
