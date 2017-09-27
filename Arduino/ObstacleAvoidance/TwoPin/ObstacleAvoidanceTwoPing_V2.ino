@@ -46,6 +46,11 @@ void setup() {
   pinMode(echoPin, INPUT);
 }
 
+/*
+
+
+*/
+
 void loop() {
 
   // right 4 pin ping sensor code
@@ -84,33 +89,44 @@ void loop() {
   // convert the time into a distance
 //  inchesRight = microsecondsToInches(durationRight);
   cmRight = microsecondsToCentimeters(durationRight);
+/*
+int KangaDirection;
 
+if KangaDirection == 'S'; // go straight
+    {do {
+        bothForward();
+    } while((cmLeft != tooClose) && (cmRight != tooClose));
+else
+    bothStop();
+}
+else if KangaDirection == 'R'; // go right
+    TurnRight();
+else if KangaDirection == 'L'; // go left   
+    TurnLeft();
+else if KangaDirection == 'E'; // error, can't find image
+  spinClockwise();
+  delay(1000);
+  bothStop();
+  delay(250);
+  spinCounterclockwise();
+  delay(1000);
+  bothStop();
+  
+  */
   if((cmLeft < tooClose) && (cmRight < tooClose))
   {
     //Turn 180 degrees (approximately)
-    bothStop();
-    delay(1000);
-    spinClockwise();
-    delay(600);
-    bothStop();  
+    Turn180();
   }
   // turn right
   else if(cmLeft < tooClose)
   {
-    bothStop();
-    delay(1000);
-    spinClockwise();
-    delay(250);
-    bothStop();  
+      TurnRight();
   }
   // turn left
   else if(cmRight < tooClose)
   {
-    bothStop();
-    delay(1000);
-    spinCounterClockwise();
-    delay(250);
-    bothStop();  
+    TurnLeft();
   }
   else
   {
@@ -120,6 +136,8 @@ void loop() {
  // bothForward();
 
   delay(100);  
+  
+  
 /*
   Serial.print(inchesLeft);
   Serial.print("in, ");
@@ -131,6 +149,30 @@ void loop() {
 }
 
 // Motor control function definitions
+void Turn180() {
+    bothStop();
+    delay(1000);
+    spinClockwise();
+    delay(600);
+    bothStop(); 
+}
+
+void TurnRight() {
+    bothStop();
+    delay(1000);
+    spinClockwise();
+    delay(250);
+    bothStop();
+}
+
+void TurnLeft() {
+    bothStop();
+    delay(1000);
+    spinCounterClockwise();
+    delay(250);
+    bothStop();  
+}
+
 void rightBackward() {
   digitalWrite(InA2, HIGH);
   digitalWrite(InB2, LOW);
@@ -211,21 +253,14 @@ long microsecondsToCentimeters(long microseconds) {
   return microseconds / 29 / 2;
 }
 
+
 /* 
+Capture image from a camera and write to a file
 
-int KangaDirection;
-
-if KangaDirection = 'S'; // go straight
-    loop();
-else if KangaDirection = 'R'; // go right
-    spinClockwise();
-    delay(500);
-    loop;
-else if KangaDirection = 'L'; // go left   
-    spinCounterClockwise();
-    delay(500);
-    loop;
-
+cam = cv2.VideoCapture(1)
+s, im = cam.read() # captures image
+cv2.imshow("Test Picture", im) # displays captured image
+cv2.imwrite("test.bmp",im) # writes image test.bmp to disk
 */
 
 
