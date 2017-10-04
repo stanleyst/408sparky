@@ -48,10 +48,13 @@ def tracking(ser):
 
             if x <= lower:
                 ser.write('L')
+                print('Going left')
             elif x >= lower*3:
                 ser.write('R')
+                print('Turn right dumbass')
             else:
                 ser.write('S')
+                print('AHHHHHHHHHHHHHHHHHHHHHHH')
         #cv2.imshow('frame',image)
         #if cv2.waitKey(1) & 0xFF == ord('q'):
         #    break
