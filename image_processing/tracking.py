@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 # Instantiate the camera
 cap = cv2.VideoCapture(0)
 
-greenLower = (29, 86, 6)
+greenLower = (29,86,6)
 greenUpper = (64, 255, 255)
 
 # I will want to put the following in a while loop later to do
@@ -47,5 +47,15 @@ while(True):
             cv2.circle(image, center, 5, (0,0,255), -1)
 
 
+    cv2.imshow('frame',image)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
 
-    cv2.imshow('what i see', image)
+cap.release()
+cv2.destroyAllWindows()
+    #cv2.imshow('window', image)
+
+    #plt.imshow(image)
+    #plt.pause(0.1)
+    #plt.show()
+    #plt.close()
