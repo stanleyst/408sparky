@@ -33,9 +33,14 @@ void spinCounterClockwise();
 void bothBackward();
 void bothForward();
 void bothStop();
+void TurnLeft();
+void TurnRight();
+void Turn180();
+void serialEvent();
 
 void setup() {
   Serial.begin(9600);
+  Serial.write('1');
   pinMode(InA2, OUTPUT);
   pinMode(InB2, OUTPUT);
   pinMode(PWM2, OUTPUT);
@@ -89,21 +94,30 @@ void loop() {
   // convert the time into a distance
 //  inchesRight = microsecondsToInches(durationRight);
   cmRight = microsecondsToCentimeters(durationRight);
-/*
-int KangaDirection;
 
-if KangaDirection == 'S'; // go straight
+/*
+int inChar;
+
+if (inChar == 'S') // go straight
     {do {
         bothForward();
     } while((cmLeft != tooClose) && (cmRight != tooClose));
-else
+    
     bothStop();
+    inChar = '5';
 }
-else if KangaDirection == 'R'; // go right
+else if (inChar == 'R') // go right
+  {
     TurnRight();
-else if KangaDirection == 'L'; // go left   
+    inChar = '5';
+  }
+else if (inChar == 'L') // go left 
+{
     TurnLeft();
-else if KangaDirection == 'E'; // error, can't find image
+    inChar = '5';
+    }
+else if (inChar == 'E') // error, can't find image
+{
   spinClockwise();
   delay(1000);
   bothStop();
@@ -111,6 +125,8 @@ else if KangaDirection == 'E'; // error, can't find image
   spinCounterclockwise();
   delay(1000);
   bothStop();
+  inChar = '5';
+  }
   
   */
   if((cmLeft < tooClose) && (cmRight < tooClose))
@@ -234,6 +250,21 @@ void spinClockwise(){
   leftForward();
 }
 
+void serialEvent() {
+  // while (Serial.available())
+  if (Serial.available()) 
+  {
+    // get the new byte:
+    inChar = (char)Serial.read();
+    // add it to the inputString:
+    // inputString += inChar;
+    // if the incoming character is a newline, set a flag so the main loop can
+    // do something about it:
+    // if (inChar == '\n') {
+    //   stringComplete = true;
+    // }
+  }
+}
 
 // Ping function definitions
 
