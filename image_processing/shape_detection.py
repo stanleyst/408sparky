@@ -8,8 +8,10 @@ FLANN_INDEX_KDTREE = 0
 
 def run_frame_processing(image_1, image_2):
     # Open the target image and the scene image
-    target = cv2.imread(image_1, 0)
+    img = cv2.imread(image_1, 0)
     scene = cv2.imread(image_2, 0)
+
+    target = cv2.Canny(img,0,500)
 
     orb = cv2.ORB_create()
 
@@ -83,14 +85,51 @@ def run_frame_processing(image_1, image_2):
         matches_mask = None
 
 
-    draw_params = dict(matchColor = (0,255,0),
+    draw_params = dict(matchColor = (255,0,0),
         singlePointColor = None,
         matchesMask = matches_mask,
         flags = 2)
 
     img_3 = cv2.drawMatches(target, kp_1, scene, kp_2, good, None, **draw_params)
 
+    pixels = [kp_2[mat.trainIdx].pt for mat in good]
+
+    print('The pixels in the second image are: {}'.format(pixels))
+
+    height, width = scene.shape
+
+    print('Pixel height is: {}'.format(height))
+    print('Pixel width is: {}'.format(width))
+
+    marker = width/4
+    left = right = straight = 0
+
+    r = l = s = False
+
+    longt = [x[0] for x in pixels]
+
+    for point in longt:
+        if point <= marker:
+            left += 1
+        elif point >= (marker*3):
+            right += 1
+        else:
+            straight += 1
+
+    if (left >= right) and (left >= straight):
+        print('Turning left')
+        l = True
+    elif (right >= left) and (right >= straight):
+        print('Turning right')
+        r = True
+    else:
+        print('Going Straight')
+        s = True
+
     plt.imshow(img_3, 'gray'), plt.show()
 
+
+    return r, l, s
+
 if __name__ == '__main__':
-    run_frame_processing('box.jpg', 'code.jpg')
+    run_frame_processing('star.jpg', 'better_zak.jpg')
