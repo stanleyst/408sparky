@@ -36,6 +36,14 @@ void bothStop();
 void TurnLeft();
 void TurnRight();
 void Turn180();
+void spinClockwise1();
+void spinCounterClockwise1();
+void bothBackward1();
+void bothForward1();
+void bothStop();
+void TurnLeft1();
+void TurnRight1();
+void Turn1801();
 void serialEvent();
 
 void setup() {
@@ -95,7 +103,7 @@ void loop() {
 //  inchesRight = microsecondsToInches(durationRight);
   cmRight = microsecondsToCentimeters(durationRight);
 
-/*
+
 int inChar;
 
 if (inChar == 'S') // go straight
@@ -119,16 +127,12 @@ else if (inChar == 'L') // go left
 else if (inChar == 'E') // error, can't find image
 {
   spinClockwise1();
-  delay(1000);
-  bothStop1();
-  delay(250);
   spinCounterclockwise1();
   delay(1000);
-  bothStop1();
   inChar = '5';
   }
   
-  */
+  
   if((cmLeft < tooClose) && (cmRight < tooClose))
   {
     //Turn 180 degrees (approximately)
@@ -248,6 +252,58 @@ void spinCounterClockwise(){
 void spinClockwise(){
   rightBackward();
   leftForward();
+}
+
+
+void TurnRight() {
+    delay(1000);
+    spinClockwise1();
+    delay(250);
+}
+
+void TurnLeft() {
+    delay(1000);
+    spinCounterClockwise1();
+    delay(250);
+}
+
+void leftForward1() {
+  digitalWrite(InA1, HIGH);
+  digitalWrite(InB1, LOW);
+  analogWrite(PWM1, PWM1_val);
+}
+
+void rightForward1() {
+  digitalWrite(InA2, LOW);
+  digitalWrite(InB2, HIGH);
+  analogWrite(PWM2, PWM2_val);
+}
+
+void leftBackward1() {
+  digitalWrite(InA1, LOW);
+  digitalWrite(InB1, HIGH);
+  analogWrite(PWM1, (PWM1_val==30));
+}
+
+void rightBackward1() {
+  digitalWrite(InA2, HIGH);
+  digitalWrite(InB2, LOW);
+  analogWrite(PWM2, (PWM2_val==64));
+}
+  
+void bothForward1() {
+  leftForward1();
+  rightForward1();
+}
+
+void spinCounterClockwise1(){
+  rightForward1();
+  leftBackward1();
+}
+
+void spinClockwise1(){
+  rightBackward1();
+  leftForward1();
 }
 
 void serialEvent() {
