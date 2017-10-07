@@ -100,31 +100,31 @@ int inChar;
 
 if (inChar == 'S') // go straight
     {do {
-        bothForward();
+        bothForward1();
     } while((cmLeft != tooClose) && (cmRight != tooClose));
     
-    bothStop();
+    bothStop1();
     inChar = '5';
 }
 else if (inChar == 'R') // go right
   {
-    TurnRight();
+    TurnRight1();
     inChar = '5';
   }
 else if (inChar == 'L') // go left 
 {
-    TurnLeft();
+    TurnLeft1();
     inChar = '5';
     }
 else if (inChar == 'E') // error, can't find image
 {
-  spinClockwise();
+  spinClockwise1();
   delay(1000);
-  bothStop();
+  bothStop1();
   delay(250);
-  spinCounterclockwise();
+  spinCounterclockwise1();
   delay(1000);
-  bothStop();
+  bothStop1();
   inChar = '5';
   }
   
