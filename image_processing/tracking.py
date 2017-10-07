@@ -1,8 +1,15 @@
 import numpy as np
+import time
 import imutils
 import cv2
 from matplotlib import pyplot as plt
 import serial
+
+def delay(length):
+    start = time.time()
+
+    while time.time() - start < length:
+        continue
 
 def tracking(ser):
     # Instantiate the camera
@@ -15,6 +22,8 @@ def tracking(ser):
     # tracking live time with a camera feed
 
     while(True):
+
+        delay(1)
 
         (ret, image) = cap.read()
 
