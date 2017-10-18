@@ -28,6 +28,7 @@ def tracking(ser):
         (ret, image) = cap.read()
 
         if not ret:
+            print('Shit I broke')
             break
 
         image = imutils.resize(image, width=600)
@@ -53,12 +54,12 @@ def tracking(ser):
                     (0, 255, 255), 2)
                 cv2.circle(image, center, 5, (0,0,255), -1)
 
-            lower = 600/4
+            lower = 600/3
 
             if x <= lower:
                 ser.write('L')
                 print('Going left')
-            elif x >= lower*3:
+            elif x >= lower*2:
                 ser.write('R')
                 print('Turn right dumbass')
             else:
