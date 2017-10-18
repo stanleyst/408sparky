@@ -2,23 +2,27 @@
 int InA1 = 2;
 int InB1 = 4;
 int PWM1 = 3;  //PWM1 connects to pin 3
-int PWM1_val = 50; //(25% = 64; 50% = 127; 75% = 191; 100% = 255)
+int PWM1_val = 40; //(25% = 64; 50% = 127; 75% = 191; 100% = 255)
 
 // Right motor
 int InA2 = 7;
 int InB2 = 8;
 int PWM2 = 6;  //PWM2 connects to pin 6
-int PWM2_val = 72; //(25% = 64; 50% = 127; 75% = 191; 100% = 255)
+int PWM2_val = 65; //(25% = 64; 50% = 127; 75% = 191; 100% = 255)
 
-int tooClose = 25; // distance to stop and decide what to do
+int tooClose = 35; // distance to stop and decide what to do
 
 // left 4-pin ping sensor
-int trigPin = 11;    //Trig - green Jumper
-int echoPin = 12;    //Echo - yellow Jumper
+// int trigPin = 11;    //Trig - green Jumper
+// int echoPin = 12;    //Echo - yellow Jumper
 
-const int pingPin = 10; // for right 3-pin ping sensor
+const int pingPinRight = 10; // for right 3-pin ping sensor
+const int pingPinLeft = 12; // for left 3-pin ping sensor
 long durationLeft = 0, cmLeft = 0, inchesLeft = 0;
 long durationRight = 0, inchesRight = 0, cmRight = 0;
+
+// Serial Declarations
+char inChar;
 
 long microsecondsToInches(long microseconds);
 long microsecondsToCentimeters(long microseconds);
@@ -40,7 +44,7 @@ void spinClockwise1();
 void spinCounterClockwise1();
 void bothBackward1();
 void bothForward1();
-void bothStop();
+void bothStop1();
 void TurnLeft1();
 void TurnRight1();
 void Turn1801();
@@ -55,8 +59,8 @@ void setup() {
   pinMode(InA1, OUTPUT);
   pinMode(InB1, OUTPUT);
   pinMode(PWM1, OUTPUT); 
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
+  // pinMode(trigPin, OUTPUT);
+  // pinMode(echoPin, INPUT);
 }
 
 /*
@@ -66,73 +70,95 @@ void setup() {
 
 void loop() {
 
-  // right 4 pin ping sensor code
+  // left 4 pin ping sensor code
   // The sensor is triggered by a HIGH pulse of 10 or more microseconds.
   // Give a short LOW pulse beforehand to ensure a clean HIGH pulse:
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(5);
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
+//  digitalWrite(trigPin, LOW);
+//  delayMicroseconds(5);
+//  digitalWrite(trigPin, HIGH);
+//  delayMicroseconds(10);
+//  digitalWrite(trigPin, LOW);
  
   // Read the signal from the sensor: a HIGH pulse whose
   // duration is the time (in microseconds) from the sending
   // of the ping to the reception of its echo off of an object.
-  pinMode(echoPin, INPUT);
-  durationLeft = pulseIn(echoPin, HIGH);
+//  pinMode(echoPin, INPUT);
+//  durationLeft = pulseIn(echoPin, HIGH);
 
   // convert the time into a distance
  // inchesLeft = microsecondsToInches(durationLeft);
-  cmLeft = microsecondsToCentimeters(durationLeft);
+ // cmLeft = microsecondsToCentimeters(durationLeft);
 
   // left 3 pin ping sensor code
-  pinMode(pingPin, OUTPUT);
-  digitalWrite(pingPin, LOW);
+  pinMode(pingPinLeft, OUTPUT);
+  digitalWrite(pingPinLeft, LOW);
   delayMicroseconds(2);
-  digitalWrite(pingPin, HIGH);
+  digitalWrite(pingPinLeft, HIGH);
   delayMicroseconds(5);
-  digitalWrite(pingPin, LOW);
+  digitalWrite(pingPinLeft, LOW);
 
   // The same pin is used to read the signal from the PING))): a HIGH pulse
   // whose duration is the time (in microseconds) from the sending of the ping
   // to the reception of its echo off of an object.
-  pinMode(pingPin, INPUT);
-  durationRight = pulseIn(pingPin, HIGH);
+  pinMode(pingPinLeft, INPUT);
+  durationLeft = pulseIn(pingPinLeft, HIGH);
+
+  // convert the time into a distance
+//  inchesRight = microsecondsToInches(durationRight);
+  cmLeft = microsecondsToCentimeters(durationLeft);
+
+  ///////////////////////
+
+  // right 3 pin ping sensor code
+  pinMode(pingPinRight, OUTPUT);
+  digitalWrite(pingPinRight, LOW);
+  delayMicroseconds(2);
+  digitalWrite(pingPinRight, HIGH);
+  delayMicroseconds(5);
+  digitalWrite(pingPinRight, LOW);
+
+  // The same pin is used to read the signal from the PING))): a HIGH pulse
+  // whose duration is the time (in microseconds) from the sending of the ping
+  // to the reception of its echo off of an object.
+  pinMode(pingPinRight, INPUT);
+  durationRight = pulseIn(pingPinRight, HIGH);
 
   // convert the time into a distance
 //  inchesRight = microsecondsToInches(durationRight);
   cmRight = microsecondsToCentimeters(durationRight);
 
-
-int inChar;
-
 if (inChar == 'S') // go straight
-    {do {
-        bothForward1();
-    } while((cmLeft != tooClose) && (cmRight != tooClose));
+    {
+      if ((cmLeft != tooClose) && (cmRight != tooClose)) {
+        bothForward();
+    }
     
-    bothStop1();
+    bothStop();
     inChar = '5';
 }
 else if (inChar == 'R') // go right
   {
-    TurnRight1();
+    if ((cmLeft != tooClose) && (cmRight != tooClose)) {
+    TurnRight();
+    } 
     inChar = '5';
   }
 else if (inChar == 'L') // go left 
 {
-    TurnLeft1();
-    inChar = '5';
+  if ((cmLeft != tooClose) && (cmRight != tooClose)) {
+    TurnLeft();
+  };
+  inChar = '5';
     }
-else if (inChar == 'E') // error, can't find image
+
+/*else // error, can't find image
 {
   spinClockwise1();
-  spinCounterclockwise1();
+  spinCounterClockwise1();
   delay(1000);
   inChar = '5';
   }
-  
-  
+*/
   if((cmLeft < tooClose) && (cmRight < tooClose))
   {
     //Turn 180 degrees (approximately)
@@ -155,7 +181,7 @@ else if (inChar == 'E') // error, can't find image
 
  // bothForward();
 
-  delay(100);  
+  delay(10);  
   
   
 /*
@@ -171,25 +197,25 @@ else if (inChar == 'E') // error, can't find image
 // Motor control function definitions
 void Turn180() {
     bothStop();
-    delay(1000);
+   // delay(1000);
     spinClockwise();
-    delay(600);
+    delay(200);
     bothStop(); 
 }
 
 void TurnRight() {
     bothStop();
-    delay(1000);
+   // delay(1000);
     spinClockwise();
-    delay(250);
+    delay(40);
     bothStop();
 }
 
 void TurnLeft() {
     bothStop();
-    delay(1000);
+   // delay(1000);
     spinCounterClockwise();
-    delay(250);
+    delay(40);
     bothStop();  
 }
 
@@ -226,7 +252,7 @@ void leftBackward() {
 void leftStop() {
   digitalWrite(InA1, LOW);
   digitalWrite(InB1, LOW);
-  analogWrite(PWM1, 0l);
+  analogWrite(PWM1, 0);
 }
 
 void bothStop() {
@@ -237,6 +263,7 @@ void bothStop() {
 void bothForward() {
   leftForward();
   rightForward();
+  delay(100);
 }
 
 void bothBackward() {
@@ -255,16 +282,14 @@ void spinClockwise(){
 }
 
 
-void TurnRight() {
-    delay(1000);
+void TurnRight1() {
     spinClockwise1();
-    delay(250);
+    delay(50);
 }
 
-void TurnLeft() {
-    delay(1000);
+void TurnLeft1() {
     spinCounterClockwise1();
-    delay(250);
+    delay(50);
 }
 
 void leftForward1() {
@@ -282,14 +307,32 @@ void rightForward1() {
 void leftBackward1() {
   digitalWrite(InA1, LOW);
   digitalWrite(InB1, HIGH);
-  analogWrite(PWM1, (PWM1_val==30));
+  analogWrite(PWM1, (PWM1_val=30));
 }
 
 void rightBackward1() {
   digitalWrite(InA2, HIGH);
   digitalWrite(InB2, LOW);
-  analogWrite(PWM2, (PWM2_val==64));
+  analogWrite(PWM2, (PWM2_val=64));
 }
+
+
+void bothStop1() {
+  rightStop1();
+  leftStop1();
+}
+
+void rightStop1() {
+  digitalWrite(InA2, LOW);
+  digitalWrite(InB2, LOW);
+  analogWrite(PWM2, 0);
+}
+
+ void leftStop1() {
+  digitalWrite(InA1, LOW);
+  digitalWrite(InB1, LOW);
+  analogWrite(PWM1, 0);
+ }
   
 void bothForward1() {
   leftForward1();

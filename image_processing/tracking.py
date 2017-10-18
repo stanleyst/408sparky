@@ -15,15 +15,15 @@ def tracking(ser):
     # Instantiate the camera
     cap = cv2.VideoCapture(0)
 
-    greenLower = (29,86,6)
-    greenUpper = (64, 255, 255)
+    redLower = (160,30,30)
+    redUpper = (255, 180, 180)
 
     # I will want to put the following in a while loop later to do
     # tracking live time with a camera feed
 
     while(True):
 
-        delay(1)
+        delay(0.25)
 
         (ret, image) = cap.read()
 
@@ -34,7 +34,7 @@ def tracking(ser):
         hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
         # Create a mask for the chosen color
-        mask = cv2.inRange(hsv, greenLower, greenUpper)
+        mask = cv2.inRange(hsv, redLower, redUpper)
         mask = cv2.erode(mask, None, iterations=2)
         mask = cv2.dilate(mask, None, iterations=2)
 
