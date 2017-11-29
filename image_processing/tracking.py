@@ -4,6 +4,28 @@ import imutils
 import cv2
 from matplotlib import pyplot as plt
 import serial
+import boto3
+
+#May have to manually add the Keys... just use the ones from the lambda stuff
+
+sqs = boto3.resource('sqs')
+queue = sqs.get_queue_by_name(QueueName='Inferno_Command')
+client = boto3.client('sqs')
+url = queue.url
+
+def pop_message(client, url):
+    response = client.receive_message(QueueUrl = url, MaxNumberOfMessage = 1)
+    try:
+        message = response['Messages'][0]['Body']
+        receipt = response['Messages'][0]['ReceiptHandle']
+        client.delete_message(QueueUrl = url, ReceiptHandle = receipt)
+
+        return message
+
+    except:
+
+        return "No Messages"
+
 
 def delay(length):
     start = time.time()
@@ -22,6 +44,8 @@ def tracking(ser):
     # tracking live time with a camera feed
 
     while(True):
+
+        alexa_command = pop_message(client, url)
 
         delay(0.25)
 
