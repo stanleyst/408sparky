@@ -45,7 +45,11 @@ def tracking(ser):
 
     while(True):
 
+        command_received = True
         alexa_command = pop_message(client, url)
+
+        if alexa_command == "No Messages":
+            command_received = False
 
         delay(0.25)
 
@@ -66,7 +70,7 @@ def tracking(ser):
             cv2.CHAIN_APPROX_SIMPLE)[-2]
         center = None
 
-        if len(cnts) > 0:
+        if len(cnts) > 0 and not command_received:
             c = max(cnts, key=cv2.contourArea)
             ((x, y), radius) = cv2.minEnclosingCircle(c)
             M = cv2.moments(c)
