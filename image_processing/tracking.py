@@ -53,6 +53,13 @@ def tracking(ser):
 
         delay(0.25)
 
+        if command_received:
+
+            if alexa_command = "stop":
+                stop_running = True
+            elif alexa_command = "resume":
+                stop_running = False
+
         (ret, image) = cap.read()
 
         if not ret:
@@ -70,7 +77,12 @@ def tracking(ser):
             cv2.CHAIN_APPROX_SIMPLE)[-2]
         center = None
 
-        if len(cnts) > 0 and not command_received:
+        if stop_running:
+            ser.write('A')
+        elif not stop_running:
+            ser.write('B')
+
+        if len(cnts) > 0 and not stop_running and not command_received:
             c = max(cnts, key=cv2.contourArea)
             ((x, y), radius) = cv2.minEnclosingCircle(c)
             M = cv2.moments(c)
