@@ -10,13 +10,12 @@ int InB2 = 8;
 int PWM2 = 6;  //PWM2 connects to pin 6
 int PWM2_val = 72; //(25% = 64; 50% = 127; 75% = 191; 100% = 255)
 
-int tooClose = 30; // distance to stop and decide what to do
+int tooClose = 10; // distance to stop and decide what to do
 char inChar;
 
 int searchCount = 0; // variable to determine whether to spin or go forward
                     // if no object is found
 
-// left 4-pin ping sensor
 const int PingPinFront = 11;    // Front 3-pin ping sensor
 const int PingPinLeft = 12;    // Left 3-pin ping sensor
 const int PingPinRight = 10; // Right 3-pin ping sensor
@@ -63,7 +62,7 @@ void setup() {
 
 void loop() {
 
-  // left 4 pin ping sensor code
+  // left 3 pin ping sensor code
   pinMode(PingPinLeft, OUTPUT);
   digitalWrite(PingPinLeft, LOW);
   delayMicroseconds(2);
@@ -113,6 +112,30 @@ void loop() {
 
 
 
+//if (inChar == 'S'){ // go straight
+//    if ((cmLeft != tooClose) && (cmRight != tooClose) && (cmFront != tooClose))
+//    {
+//      bothForward(80);
+//    }
+//    else 
+//    {bothStop(1);
+//    inChar = '5';
+//    }
+//    // searchCount = 0;
+//}
+//else if (inChar == 'R') // go right
+//  {
+//    KangaSlowRight(40);
+//    inChar = '5';
+//    // searchCount = 0;
+//  }
+//else if (inChar == 'L') // go left 
+//{
+//    KangaSlowLeft(40);
+//    inChar = '5';
+//    // searchCount = 0;
+//}
+
 if (inChar == 'S'){ // go straight
     if ((cmLeft != tooClose) && (cmRight != tooClose) && (cmFront != tooClose))
     {
@@ -122,19 +145,19 @@ if (inChar == 'S'){ // go straight
     {bothStop(1);
     inChar = '5';
     }
-    searchCount = 0;
+    // searchCount = 0;
 }
 else if (inChar == 'R') // go right
   {
     KangaSlowRight(40);
     inChar = '5';
-    searchCount = 0;
+    // searchCount = 0;
   }
 else if (inChar == 'L') // go left 
 {
     KangaSlowLeft(40);
     inChar = '5';
-    searchCount = 0;
+    // searchCount = 0;
 }
 
 //else 
@@ -203,22 +226,24 @@ else if (inChar == 'L') // go left
   // still in front of Sparky, and the image processing code
   // just didn't send a command in time. After a set time,
   // give up and start spinning to search  
-  else
-  {
-    if(searchCount < 5)
-    {
-      bothForward(20);
-      bothStop(100);
-      searchCount++;
-    }
-    else
-    {
-      TurnRight(30);
-      bothStop(100);
-    }
-  }
-     
-      
+//  else
+//  {
+//    if(searchCount < 5)
+//    {
+//      bothForward(20);
+//      bothStop(100);
+//      searchCount++;
+//    }
+//    else
+//    {
+//      TurnRight(30);
+//      bothStop(100);
+//    }
+//  }
+//     
+
+
+   
 
 
  // delay(100);
@@ -292,7 +317,7 @@ void leftBackward() {
 void leftStop() {
   digitalWrite(InA1, LOW);
   digitalWrite(InB1, LOW);
-  analogWrite(PWM1, 0l);
+  analogWrite(PWM1, 0);
 }
 
 void bothStop(int delayTime) {
