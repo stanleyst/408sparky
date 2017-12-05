@@ -17,11 +17,6 @@ import difflib
 # Sean - Alexa Interface Imports
 import boto3
 
-# Sean - Define the SCARY STUFF
-#AWS_KEY = 'AKIAIC5RW64OA5WVEIHQ'
-#SECRET_KEY = '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'
-#REGION = 'us-east-1'
-
 # SQS Server Stuff...
 sqs = boto3.resource('sqs')
 queue = sqs.get_queue_by_name(QueueName="Inferno_Command")
@@ -79,19 +74,24 @@ def main():
 
         # Receive Commands from the SQS Server
         command_received = True
+        stop_running = False
+        resume_running = False
+        turn_left = False
+        turn_right = False
         alexa_command = pop_message(client, url)
 
         if alexa_command == "No Messages":
+            print('No Command Received')
             command_received = False
         
-        delay(0.125)
+        delay(0.25)
 
         # Interpret the Alexa Command
         if command_received:
-            if alexa_command == "stop":
+            if alexa_command == "Stop":
                 stop_running = True
-            elif alexa_command == "resume":
-                stop_running = False
+            elif alexa_command == "Resume":
+                resume_running = True
             elif alexa_command == "turn left":
                 turn_left = True
             elif alexa_command == "turn right":
@@ -116,10 +116,29 @@ def main():
 
         listOfPossiblePlates = DetectChars.detectCharsInPlates(listOfPossiblePlates)        # detect chars in plates
 
+        if command_received:
+            print("Received a command")
+            if stop_running:
+                ser.write('A')
+                print('Stop')
+
+            elif resume_running:
+                ser.write('B')
+                print('Running')
+
+            elif turn_left:
+                ser.write('C')
+                print("Going Left...")
+
+            elif turn_right:
+                ser.write('D')
+                print("Going Right...")
+
         # cv2.imshow("imgOriginalScene", imgOriginalScene)            # show scene image
 
         if len(listOfPossiblePlates) == 0:                          # if no plates were found
-            print "\nno license plates were detected\n"             # inform user no plates were found
+            continue
+            #print "\nno license plates were detected\n"             # inform user no plates were found
         else:                                                       # else
                     # if we get in here list of possible plates has at leat one plate
 
@@ -133,39 +152,27 @@ def main():
             # cv2.imshow("imgThresh", licPlate.imgThresh)
 
             if len(licPlate.strChars) == 0:                     # if no chars were found in the plate
-                print "\nno characters were detected\n\n"       # show message
+                #print "\nno characters were detected\n\n"       # show message
+                continue
                 # return                                          # and exit program
             # end if
 
             # drawRedRectangleAroundPlate(imgOriginalScene, licPlate)             # draw red rectangle around plate
 
-            print "\nlicense plate read from image = " + licPlate.strChars + "\n"       # write license plate text to std out
-            print "----------------------------------------"
+            #print "\nlicense plate read from image = " + licPlate.strChars + "\n"       # write license plate text to std out
+            #print "----------------------------------------"
 
             percentMatch = difflib.SequenceMatcher(None, licPlate.strChars, "GLEN239V")
-            print "\n Character ratio = "
-            print percentMatch.ratio()
-            print "\n"
+            #print "\n Character ratio = "
+            #print percentMatch.ratio()
+            #print "\n"
             
             # Get horizontal center of letters
             ( (intPlateCenterX, intPlateCenterY), (intPlateWidth, intPlateHeight), fltCorrectionAngleInDeg ) = licPlate.rrLocationOfPlateInScene
             letterCenter = intPlateCenterX
 
-            # Interpret and Perform the Alexa Command
-            if command_received:
-                if stop_running:
-                    ser.write('A')
-                elif not stop_running:
-                    ser.write('B')
-
-                elif turn_left:
-                    ser.write('C')
-
-                elif turn_right:
-                    ser.write('D')
-
-            lower = 150
-            upper = 450
+            lower = 200
+            upper = 400
 
             if percentMatch.ratio() > 0.2 and not command_received:
                 if letterCenter <= lower:
