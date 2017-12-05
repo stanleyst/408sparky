@@ -14,6 +14,37 @@ import imutils
 import serial
 import difflib
 
+# Sean - Alexa Interface Imports
+import boto3
+
+# Sean - Define the SCARY STUFF
+AWS_KEY = 'AKIAIC5RW64OA5WVEIHQ'
+SECRET_KEY = '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'
+REGION = 'us-east-1'
+
+# SQS Server Stuff...
+sqs = boto3.resource('sqs')
+queue = sqs.get_queue_by_name(QueueName="Inferno_Command")
+client = boto3.client('sqs', aws_access_key_id = AWS_KEY, aws_secret_access_key = SECRET_KEY, region_name = REGION)
+url = queue.url
+
+# Function to pop message from the queue
+def pop_message(client, url):
+
+    # Get the response from the SQS Server
+    response = client.receive_message(QueueUrl = url, MaxNumberOfMessage = 1)
+
+    try:
+        message = response['Messages'][0]['Body']
+        receipt = response['Messages'][0]['ReceiptHandle']
+        client.delete_message(QueueUrl = url, ReceiptHandle = receipt)
+
+        return message
+
+    except:
+
+        return "No Messages"
+
 # module level variables ##########################################################################
 SCALAR_BLACK = (0.0, 0.0, 0.0)
 SCALAR_WHITE = (255.0, 255.0, 255.0)
@@ -45,8 +76,28 @@ def main():
         connected = True
     
     while(True):
+
+        # Receive Commands from the SQS Server
+        command_received = True
+        turn_left = False
+        turn_right = False
+        alexa_command = pop_message(client, url)
+
+        if alexa_command == "No Messages":
+            command_received = False
         
         delay(0.125)
+
+        # Interpret the Alexa Command
+        if command_received:
+            if alexa_command = "stop":
+                stop_running = True
+            elif alexa_command = "resume":
+                stop_running = False
+            elif alexa_command = "turn left":
+                turn_left = True
+            elif alexa_command = "turn right":
+                turn_right = True
         
         (ret, imgOriginalScene) = cap.read()
         
@@ -101,10 +152,23 @@ def main():
             # Get horizontal center of letters
             ( (intPlateCenterX, intPlateCenterY), (intPlateWidth, intPlateHeight), fltCorrectionAngleInDeg ) = licPlate.rrLocationOfPlateInScene
             letterCenter = intPlateCenterX
-            lower = 250
-            upper = 350
-            
-            if percentMatch.ratio() > 0.2:
+
+            # Interpret and Perform the Alexa Command
+            if stop_running:
+                ser.write('A')
+            elif not stop_running:
+                ser.write('B')
+
+            elif turn_left:
+                ser.write('C')
+
+            elif turn_right:
+                ser.write('D')
+
+            lower = 150
+            upper = 450
+
+            if percentMatch.ratio() > 0.2 and not stop_running and not command_received:
                 if letterCenter <= lower:
                     ser.write('L')
                     print('Going left')
