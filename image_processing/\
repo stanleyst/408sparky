@@ -32,7 +32,7 @@ url = queue.url
 def pop_message(client, url):
 
     # Get the response from the SQS Server
-    response = client.receive_message(QueueUrl = url, MaxNumberOfMessages = 1)
+    response = client.receive_message(QueueUrl = url, MaxNumberOfMessage = 1)
 
     try:
         message = response['Messages'][0]['Body']
@@ -79,6 +79,8 @@ def main():
 
         # Receive Commands from the SQS Server
         command_received = True
+        turn_left = False
+        turn_right = False
         alexa_command = pop_message(client, url)
 
         if alexa_command == "No Messages":
@@ -152,22 +154,21 @@ def main():
             letterCenter = intPlateCenterX
 
             # Interpret and Perform the Alexa Command
-            if command_received:
-                if stop_running:
-                    ser.write('A')
-                elif not stop_running:
-                    ser.write('B')
+            if stop_running:
+                ser.write('A')
+            elif not stop_running:
+                ser.write('B')
 
-                elif turn_left:
-                    ser.write('C')
+            elif turn_left:
+                ser.write('C')
 
-                elif turn_right:
-                    ser.write('D')
+            elif turn_right:
+                ser.write('D')
 
             lower = 150
             upper = 450
 
-            if percentMatch.ratio() > 0.2 and not command_received:
+            if percentMatch.ratio() > 0.2 and not stop_running and not command_received:
                 if letterCenter <= lower:
                     ser.write('L')
                     print('Going left')
