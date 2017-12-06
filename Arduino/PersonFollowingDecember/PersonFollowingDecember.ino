@@ -10,11 +10,12 @@ int InB2 = 8;
 int PWM2 = 6;  //PWM2 connects to pin 6
 int PWM2_val = 72; //(25% = 64; 50% = 127; 75% = 191; 100% = 255)
 
-int tooClose = 25; // distance to stop and decide what to do
+int tooClose = 35; // distance to stop and decide what to do
 char inChar;
 int resumeFlag = 1;
 int searchLeftFlag = 0;
 int searchRightFlag = 0;
+int stopFlag = 0;
 
 int searchCount = 0; // variable to determine whether to spin or go forward
                     // if no object is found
@@ -152,27 +153,46 @@ void loop() {
     if(inChar == 'A') // A means STOP!!
     {
       resumeFlag = 0;
+      stopFlag = 1;
       searchRightFlag = 0;
       searchLeftFlag = 0;
+      inChar = '5';
+      bothStop(50);
     }
     else if(inChar == 'B') // B is RESUME
     {
        resumeFlag = 1;
+       stopFlag = 0;
+       inChar = '5';
     }
     else if(inChar == 'C') // search Left
     {
       resumeFlag = 1;
+      stopFlag = 0;
       searchLeftFlag = 1;
       searchRightFlag = 0;
+      inChar = '5';
     }
     else if(inChar == 'D') // search Right
     {
       resumeFlag = 1;
+      stopFlag = 0;
       searchRightFlag = 1;
       searchLeftFlag = 0;
+      inChar = '5';
+    }
+
+    else if (inChar == 'W') //Where are you??
+    {
+      resumeFlag = 1;
+//      searchRightFlag = 1;
+//      searchLeftFlag = 0;
+      stopFlag = 0;
+      inChar = '5';
+      bothStop(50);
     }
     
-    if(resumeFlag == 1)
+    if(resumeFlag == 1 && stopFlag == 0)
     {
       if (inChar == 'S'){ // go straight
 
@@ -181,39 +201,38 @@ void loop() {
             searchLeftFlag = 0;
 
           inChar = '5';
-          searchFlag = 4;
-          // searchCount = 0;
+          //searchFlag = 4;
       }
       else if (inChar == 'R') // go right
         {
-          TurnRight(40);
+          TurnRight(60);
           searchRightFlag = 0;
           searchLeftFlag = 0;
           // KangaSlowRight(40);
           inChar = '5';
-          // searchCount = 0;
-          searchFlag = 2;
-          searchCounter = 0;
         }
       else if (inChar == 'L') // go left 
       {
-           TurnLeft(40);
+           TurnLeft(60);
            searchRightFlag = 0;
            searchLeftFlag = 0;
           //KangaSlowLeft(40);
-          inChar = '5';
-          // searchCount = 0;
-          searchFlag = 3;
-          searchCounter = 0;    
+          inChar = '5';   
       }
-      else if (searchLeftFlag == 1)
+      if (searchLeftFlag == 1)
       {
-        TurnLeft(40);
+        TurnLeft(60);
+        delay(150);
       }
       else if (searchRightFlag == 1)
       {
-        TurnRight(40);
+        TurnRight(60);
+        delay(150);
       }
+
+//      else {
+//        bothStop(1);
+//      }
       
       /// ADD SEARCH FEATURE
 //      else

@@ -137,6 +137,8 @@ def main():
         # cv2.imshow("imgOriginalScene", imgOriginalScene)            # show scene image
 
         if len(listOfPossiblePlates) == 0:                          # if no plates were found
+            ser.write('W')
+            print('I got lost...')
             continue
             #print "\nno license plates were detected\n"             # inform user no plates were found
         else:                                                       # else
@@ -184,6 +186,10 @@ def main():
                 else:
                     ser.write('S')
                     print('AHHHHHHHHHHHHHHHHHHHHHHH')
+
+            elif percentMatch.ratio() <= 0.2 and not command_received:
+                ser.write('W')
+                print('I got lost')
             
             # writeLicensePlateCharsOnImage(imgOriginalScene, licPlate)           # write license plate text on the image
 
